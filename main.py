@@ -5,6 +5,7 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import binascii
 import datetime
+import json
 from colorama import Fore
 import os
 
@@ -20,20 +21,20 @@ def print_ascii_art():
     by = f"""{Fore.CYAN}                                     Por Nicolás Rodríguez Torres"""
     print(logo)   
     print(by)
-    
+with open('config.json','r') as conf:
+    conf_data = json.load(conf)  
+try:
+    CLIENT = cosmos_client.CosmosClient(conf_data['UrlHost'], {'masterKey': conf_data['AzureKey']}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
+except Exception as e:
+    cli = False
+
 
 app = Flask(__name__)
-
 def clear():
   if os.name == "nt":
     os.system("cls")
   else:
-    os.system("clear")
-#crea el cliente de azure 
-def create_client(host,master_key):
-        client = cosmos_client.CosmosClient(host, {'masterKey': master_key}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
-        return client
-   
+    os.system("clear")  
 #crea el cliente o lo trae si ya existe
 def get_container(db,name):
     try: 
@@ -58,18 +59,11 @@ def add_item(container,name,data,partition):
 @app.route('/create_database',methods=['POST'])
 def create_database():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     try:
-    # 
-    # aqui se creal el cliente que es la puerta de entrada a la base de datos 
-      client = create_client(HOST,MASTER_KEY)
-    # con esa misma puerta de entrada se hace un llamado a la base de datos y se guarad en esa variable db
-      #print("si pasa")
       try:
          # print("netra")
-          db = client.create_database(DATABASE_ID) 
+          db =  CLIENT.create_database(DATABASE_ID) 
           #print("LA crea")
       except exceptions.CosmosResourceExistsError as e:
            return jsonify({'error': 'Ya esta creada esa base de datos'
@@ -77,7 +71,7 @@ def create_database():
          # print("La trae")
       return jsonify({'response': 'Ya tienes la base de datos crack! ;) solo falta agregar los datos'
                       ,'database_ID': db.id,
-                      'client_ID' : id(client)
+                      'client_ID' : id(CLIENT)
                       })
     except exceptions.CosmosHttpResponseError as e:
       return jsonify({'error': 'Ocurrio un error :(, datos erroneos o problemas del servidor',
@@ -95,11 +89,8 @@ def list_databases():
     cont = 0
     list = {}
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     try:
-       client =  create_client(HOST,MASTER_KEY)
-       list_db = client.list_databases()
+       list_db = CLIENT.list_databases()
        #se valida que la lista no venga vacia
        if list_db:             
             for item in list_db:
@@ -130,12 +121,9 @@ def list_containers():
      listC = {}
      cont = 0
      data = request.get_json()
-     HOST = data.get('host')
-     MASTER_KEY = data.get('A-key')
      DATABASE_ID = data.get('name_Db')
      try:
-         client = create_client(HOST,MASTER_KEY)
-         db = client.get_database_client(DATABASE_ID)
+         db = CLIENT.get_database_client(DATABASE_ID)
          list_cont = list(db.list_containers())
          print(list_cont)
          if list_cont:
@@ -162,13 +150,10 @@ def list_items():
      listI = {}
      cont = 0
      data = request.get_json()
-     HOST = data.get('host')
-     MASTER_KEY = data.get('A-key')
      DATABASE_ID = data.get('name_Db')
      name_container = data.get('container')
      try:
-         client = create_client(HOST,MASTER_KEY)
-         db = client.get_database_client(DATABASE_ID)
+         db = CLIENT.get_database_client(DATABASE_ID)
          container = db.get_container_client(name_container)
          list_item = container.read_all_items()       
          for item in list_item:
@@ -195,15 +180,12 @@ def list_items():
 @app.route('/get_item',methods=['GET'])
 def get_item():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     name = data.get('container')
     name_item = data.get('name_item')
     partition = data.get('partition')
     try:
-        client = create_client(HOST,MASTER_KEY)
-        db = client.get_database_client(DATABASE_ID)
+        db = CLIENT.get_database_client(DATABASE_ID)
         container = db.get_container_client(name)
         item = container.read_item(name_item,partition)
         return jsonify(
@@ -233,16 +215,13 @@ def get_item():
 @app.route('/create_item',methods=['POST'])
 def create_item():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     name = data.get('container')
     name_item = data.get('name_item')
     objectI = data.get('item')
     partition = data.get('partition')
     try:
-        client = create_client(HOST,MASTER_KEY)
-        db = client.get_database_client(DATABASE_ID)
+        db = CLIENT.get_database_client(DATABASE_ID)
         container = get_container(db,name)
         item = add_item(container,name_item,objectI,partition)
         if item :
@@ -271,13 +250,10 @@ def create_item():
 @app.route('/delete_container',methods=['DELETE'])
 def delete_container():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     name = data.get('container')
     try:
-        client = create_client(HOST,MASTER_KEY)
-        db = client.get_database_client(DATABASE_ID)
+        db = CLIENT.get_database_client(DATABASE_ID)
         db.delete_container(name)
         return jsonify({
         'status' : 200,
@@ -297,15 +273,12 @@ def delete_container():
 @app.route('/delete_item',methods = ['DELETE'])
 def delete_it():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     name = data.get('container')
     name_item = data.get('name_item')
     partition = data.get('partition')
     try:
-        client = create_client(HOST,MASTER_KEY)
-        db = client.get_database_client(DATABASE_ID)
+        db = CLIENT.get_database_client(DATABASE_ID)
         container = db.get_container_client(name)
         container.delete_item(name_item,partition)
         return jsonify({
@@ -329,12 +302,9 @@ def delete_it():
 @app.route('/delete_database',methods=['DELETE'])
 def delete_database():
     data = request.get_json()
-    HOST = data.get('host')
-    MASTER_KEY = data.get('A-key')
     DATABASE_ID = data.get('name_Db')
     try:
-        client = create_client(HOST,MASTER_KEY)
-        client.delete_database(DATABASE_ID)
+        CLIENT.delete_database(DATABASE_ID)
         return jsonify({
             'status':200,
             'response':f'La base de datos {DATABASE_ID} ha sido eliminada'
@@ -354,7 +324,11 @@ def delete_database():
 if __name__ == '__main__':
     clear()
     print_ascii_art()  
-    url=f"""{Fore.GREEN} UrlApi: http://127.0.0.1:5000"""
-    print(url)
+    if cli:
+     url=f"""{Fore.GREEN} UrlApi: http://127.0.0.1:5000"""
+     print(url)
+    else:
+     error=f"""{Fore.RED} Error al crear el cliente, verifica las credenciales"""
+     print(error)
     app.run(debug=True)
     
