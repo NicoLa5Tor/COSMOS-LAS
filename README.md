@@ -1,4 +1,5 @@
 # COSMOS-LAS
+    ![alt text](/assets/image-2.png)
 Esta api fue diseñada para gestionar las acciones crud de la base de datos noSQl conocida como Cosmos
 en azure, a continuación te muestro el paso a paso para usarla:
 
@@ -6,11 +7,11 @@ en azure, a continuación te muestro el paso a paso para usarla:
  2. Ve al archivo config y agrega las credenciales que se piden
  3. instala las librerias necesariasa, si ya las tienes omite este paso:
     
-    ![alt text](image.png)
+    ![alt text](/assets/image.png)
 
  4. Ejecuta el archivo main de la api en un entorno local
 
-    ![alt text](image-1.png)
+    ![alt text](/assets/image-1.png)
 
  5. Ya con la api en ejecución local lee la documentación para saber que servicio necesita
 
