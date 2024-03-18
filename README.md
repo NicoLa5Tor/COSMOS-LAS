@@ -19,7 +19,8 @@ en azure, a continuación te muestro el paso a paso para usarla:
  Con el servicio tipo POST "/create_database" puedes crear bases de datos de manera rapida y sencilla
  El unico parametro que debes enviar en el header es "name_Db", solo si la base de datos que quieres aun no se ha creado
  ## Crear Item
- Con el servicio tipo POST "/create_item" puedes crear items de manera sencilla, solo necesitas enviar en el header los siguiente parámetros
+ Con el servicio tipo POST "/create_item" puedes crear items de manera sencilla, solo necesitas enviar en el header los siguiente parámetros.
+	
  {
     "name_Db" : "Nombre de la base de datos",
     "name_item" : "Nombre del item",
@@ -27,6 +28,7 @@ en azure, a continuación te muestro el paso a paso para usarla:
     "container" : "Nombre del contenedor (no importa si está creado o no)"
     "item" : {Contenido que se quiere enviar a la base de datos}
   }
+		
   ten en cuanta que la base de datos debe estar creada (el servicio ya agrega la fecha de creación)
   ## Consultar bases de datos creadas
   Con el servicio GET "/list_databases" podrás consultar las bases de datos que ya tienes creadas, no requiere argumentos
