@@ -9,7 +9,7 @@ import json
 from colorama import Fore
 import os
 
-
+cli = True
 def print_ascii_art():
     logo = f"""{Fore.MAGENTA}
  █████    ██████    █████   ██     ██      ██████    █████          ██          ██       █████
@@ -63,6 +63,7 @@ def create_database():
     try:
       try:
          # print("netra")
+          print(DATABASE_ID)
           db =  CLIENT.create_database(DATABASE_ID) 
           #print("LA crea")
       except exceptions.CosmosResourceExistsError as e:
@@ -85,10 +86,8 @@ def create_database():
     # llama list databases y se almacena el resultado en una lista de python pra luego recorrerla y procesar los datos  
 @app.route('/list_databases',methods=['GET'])
 def list_databases():
-
     cont = 0
     list = {}
-    data = request.get_json()
     try:
        list_db = CLIENT.list_databases()
        #se valida que la lista no venga vacia
