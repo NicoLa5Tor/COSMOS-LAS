@@ -1,5 +1,5 @@
 # COSMOS-LAS
-    ![alt text](/assets/image-2.png)
+![alt text](/assets/image-2.png)
 Esta api fue diseñada para gestionar las acciones crud de la base de datos noSQl conocida como Cosmos
 en azure, a continuación te muestro el paso a paso para usarla:
 
