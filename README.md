@@ -22,11 +22,17 @@ en azure, a continuación te muestro el paso a paso para usarla:
  Con el servicio tipo POST "/create_item" puedes crear items de manera sencilla, solo necesitas enviar en el header los siguiente parámetros.
 	
  {
+ 
     "name_Db" : "Nombre de la base de datos",
+    
     "name_item" : "Nombre del item",
+    
     "partition" : "La partición del item",
+    
     "container" : "Nombre del contenedor (no importa si está creado o no)"
+    
     "item" : {Contenido que se quiere enviar a la base de datos}
+    
   }
 		
   ten en cuanta que la base de datos debe estar creada (el servicio ya agrega la fecha de creación)
