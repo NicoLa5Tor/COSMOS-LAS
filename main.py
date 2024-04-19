@@ -3,6 +3,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
+from encryption import EnviromentVals
 import binascii
 import datetime
 import json
@@ -22,9 +23,12 @@ def print_ascii_art():
     print(logo)   
     print(by)
 with open('config.json','r') as conf:
-    conf_data = json.load(conf)  
+   conf_data = json.load(conf)  
+
 try:
-    CLIENT = cosmos_client.CosmosClient(conf_data['UrlHost'], {'masterKey': conf_data['AzureKey']}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
+    obj = EnviromentVals()
+    print(f"Lallave es: {obj.key()}")
+    CLIENT = cosmos_client.CosmosClient(conf_data['UrlHost'], {'masterKey': obj.key()}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
 except Exception as e:
     cli = False
 
@@ -320,8 +324,8 @@ def delete_database():
             'status' :500
         })
     #con este servico se borra el contenedor especificado en le header, solo se borra uno a la vez
-if __name__ == '__main__':
-    clear()
+#if __name__ == '__main__':
+ #   clear()
     print_ascii_art()  
     if cli:
      url=f"""{Fore.GREEN} UrlApi: http://127.0.0.1:5000"""
