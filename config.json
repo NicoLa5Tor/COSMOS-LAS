@@ -1,4 +1,4 @@
 {
-    "UrlHost" : "Host here",
-    "AzureKey" : "key here"
+    "UrlHost" : "https://nicola5db.documents.azure.com:443/",
+    "AzureKey" : "LMBxjryLtkoGSNYWU0EY3afOwTcIxo8Pxs4B58c7Wjiz2iGAdMIICBxO01iPMoLcrxileZPyUVVVACDb0MkDOQ=="
 }
